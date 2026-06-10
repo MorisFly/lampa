@@ -2,7 +2,7 @@
     'use strict';
 
     // ==========================================
-    // БАЗА ДАННЫХ ВОПРОСОВ
+    // БАЗА ДАННЫХ ВОПРОСОВ (Без дубликатов)
     // ==========================================
     const QUESTIONS_BASE = [
         // --- Теория большого взрыва ---
@@ -62,7 +62,7 @@
         { show: 'tbbt', difficulty: 'medium', question: 'Какой персонаж в сериале постоянно конфликтует с Шелдоном?', answers: ['Барри Крипке', 'Стюарт', 'Зак', 'Уил Уитон'], correct: 0 },
         
         { show: 'tbbt', difficulty: 'hard', question: 'Какое отчество у Шелдона Купера?', answers: ['Ли', 'Линус', 'Корнелиус', 'Франклин'], correct: 0 },
-        { show: 'tbbt', difficulty: 'nerd', question: 'Какое число Шелдон считает идеальным?', answers: ['42', '73', '0', '13'], correct: 1 },
+        { show: 'tbbt', difficulty: 'hard', question: 'Какое число Шелдон считает идеальным?', answers: ['42', '73', '0', '13'], correct: 1 },
         { show: 'tbbt', difficulty: 'hard', question: 'Какое число Шелдон считает «своим идеальным числом»?', answers: ['42', '73', '11', '137'], correct: 1 },
         { show: 'tbbt', difficulty: 'hard', question: 'Как называется соглашение Шелдона и Эми о научном сотрудничестве и отношениях?', answers: ['Relationship Agreement', 'Love Contract', 'Scientific Pact', 'Couple Rules'], correct: 0 },
         { show: 'tbbt', difficulty: 'hard', question: 'Как зовут актёра, играющего самого себя и часто спорящего с Шелдоном?', answers: ['Уил Уитон', 'Натан Филлион', 'Джордж Такеи', 'Брент Спайнер'], correct: 0 },
@@ -88,13 +88,13 @@
         { show: 'tbbt', difficulty: 'hard', question: 'Как зовут собаку Холта, часто упоминаемую фанатами кроссоверов?', answers: ['Чеддер', 'Бисквит', 'Орео', 'Рекс'], correct: 0 },
         { show: 'tbbt', difficulty: 'hard', question: 'Как называется финальный эпизод сериала?', answers: ['The Stockholm Syndrome', 'The Final Theory', 'The Last Equation', 'The Big Bang End'], correct: 0 },
         { show: 'tbbt', difficulty: 'hard', question: 'Что Шелдон и Эми получают в конце сериала?', answers: ['Нобелевскую премию', 'Премию Хокинга', 'Медаль Фейнмана', 'Премию Тьюринга'], correct: 0 },
-
+        
         // --- Офис ---
         { show: 'office', difficulty: 'easy', question: 'Как называется компания, в которой работают герои сериала?', answers: ['Dunder Mifflin', 'Initech', 'Sabre', 'Paper Co.'], correct: 0 },
-        { show: 'office', difficulty: 'easy', question: 'Кем Майкл Скотт приходится сотрудникам?', answers: ['Региональным менеджером', 'Бухгалтером', 'Секретарем', 'Владельцем здания'], correct: 0 },
+        { show: 'office', difficulty: 'easy', question: 'Кем Майкл Скотт приходится сотрудникам офиса?', answers: ['Региональным менеджером', 'Бухгалтером', 'Секретарем', 'Владельцем здания'], correct: 0 },
         { show: 'office', difficulty: 'easy', question: 'В каком городе происходит действие сериала The Office (US)?', answers: ['Скрэнтон', 'Нью-Йорк', 'Чикаго', 'Филадельфия'], correct: 0 },
-        { show: 'office', difficulty: 'easy', question: 'Как называется компания в сериале?', answers: ['Dunder Mifflin', 'Staples', 'Office Depot', 'Scranton Paper'], correct: 0 },
-        { show: 'office', difficulty: 'easy', question: 'Кто является региональным менеджером офиса в начале сериала?', answers: ['Майкл Скотт', 'Джим Халперт', 'Дуайт Шрут', 'Райан Ховард'], correct: 0 },
+        { show: 'office', difficulty: 'easy', question: 'Какое домашнее животное было у Анжелы, которое Дуайт засунул в морозилку?', answers: ['Кот', 'Собака', 'Попугай', 'Хомяк'], correct: 0 },
+        { show: 'office', difficulty: 'easy', question: 'Кто в сериале является главным шутником и постоянно разыгрывает Дуайта?', answers: ['Джим Халперт', 'Райан', 'Кевин', 'Тоби'], correct: 0 },
         { show: 'office', difficulty: 'easy', question: 'Как зовут секретаршу в офисе?', answers: ['Пэм Бизли', 'Эрин Хэннон', 'Анжела Мартин', 'Келли Капур'], correct: 0 },
         { show: 'office', difficulty: 'easy', question: 'Как зовут продавца с любовью к порядку и оружию?', answers: ['Дуайт Шрут', 'Стэнли Хадсон', 'Оскар Мартинес', 'Кевин Мэлоун'], correct: 0 },
         { show: 'office', difficulty: 'easy', question: 'Кто часто разыгрывает Дуайта?', answers: ['Джим Халперт', 'Райан Ховард', 'Тоби Флендерсон', 'Крид Брэттон'], correct: 0 },
@@ -117,7 +117,6 @@
         { show: 'office', difficulty: 'easy', question: 'Кто носит бейдж с "Assistant to the Regional Manager"?', answers: ['Дуайт Шрут', 'Джим', 'Оскар', 'Стэнли'], correct: 0 },
         { show: 'office', difficulty: 'easy', question: 'Как зовут оператора склада и друга Майкла?', answers: ['Дэррил Филбин', 'Крид Брэттон', 'Райан Ховард', 'Тоби'], correct: 0 },
         { show: 'office', difficulty: 'easy', question: 'Какой жанр у сериала?', answers: ['Мокьюментари', 'Ситком', 'Драма', 'Триллер'], correct: 0 },
-
         
         { show: 'office', difficulty: 'medium', question: 'В какой предмет Джим запек степлер Дуайта в пилотной серии?', answers: ['В торт', 'В бетон', 'В желе', 'В лед'], correct: 2 },
         { show: 'office', difficulty: 'medium', question: 'Как называется первая серия сериала?', answers: ['Pilot', 'Diversity Day', 'The Dundies', 'Office Introduction'], correct: 0 },
@@ -176,9 +175,9 @@
         
         // --- Отчаянные домохозяйки ---
         { show: 'housewives', difficulty: 'easy', question: 'На какой вымышленной улице живут главные героини?', answers: ['Вистерия Лейн', 'Бейкер Стрит', 'Сансет Бульвар', 'Гроув Стрит'], correct: 0 },
-        { show: 'housewives', difficulty: 'easy', question: 'На какой улице происходит действие сериала?', answers: ['Wisteria Lane', 'Maple Street', 'Sunset Boulevard', 'Rosewood Drive'], correct: 0 },
+        { show: 'housewives', difficulty: 'easy', question: 'Кто из героинь в прошлом была профессиональной фотомоделью?', answers: ['Габриэль Солис', 'Бри Ван де Камп', 'Сьюзан Майер', 'Линетт Скаво'], correct: 0 },
         { show: 'housewives', difficulty: 'easy', question: 'С чего начинается сериал (смерть рассказчицы)?', answers: ['Самоубийство Мэри Элис', 'Убийство Сьюзан', 'Пожар', 'Авария'], correct: 0 },
-        { show: 'housewives', difficulty: 'easy', question: 'Как зовут рыжеволосую главную героиню?', answers: ['Сьюзан Майер', 'Бри Ван де Камп', 'Габриэль Солис', 'Линетт Скаво'], correct: 0 },
+        { show: 'housewives', difficulty: 'easy', question: 'Как зовут рыжеволосую главную героиню?', answers: ['Сьюзан Майер', 'Бри Ван де Камп', 'Габриэль Солис', 'Линетт Скаво'], correct: 1 },
         { show: 'housewives', difficulty: 'easy', question: 'Какая героиня идеально одержима порядком и этикетом?', answers: ['Бри Ван де Камп', 'Сьюзан', 'Габриэль', 'Линетт'], correct: 0 },
         { show: 'housewives', difficulty: 'easy', question: 'Кто бывшая модель в сериале?', answers: ['Габриэль Солис', 'Сьюзан', 'Бри', 'Эди'], correct: 0 },
         { show: 'housewives', difficulty: 'easy', question: 'У кого много детей и хаотичная жизнь?', answers: ['Линетт Скаво', 'Бри', 'Сьюзан', 'Мэри Элис'], correct: 0 },
@@ -201,12 +200,12 @@
         { show: 'housewives', difficulty: 'easy', question: 'Кто из героинь самая организованная?', answers: ['Бри', 'Сьюзан', 'Габриэль', 'Линетт'], correct: 0 },
         { show: 'housewives', difficulty: 'easy', question: 'Кто из героинь переживает семейный хаос?', answers: ['Линетт', 'Бри', 'Сьюзан', 'Габриэль'], correct: 0 },
         { show: 'housewives', difficulty: 'easy', question: 'Какой элемент есть почти в каждой серии?', answers: ['Секреты и драмы', 'Сражения', 'Космос', 'Судебные процессы'], correct: 0 },
-                
+        
         { show: 'housewives', difficulty: 'medium', question: 'Самоубийство какой героини запускает сюжет первого сезона?', answers: ['Мэри Элис Янг', 'Бри Ван де Камп', 'Габриэль Солис', 'Иди Бритт'], correct: 0 },
         { show: 'housewives', difficulty: 'medium', question: 'Кто создатель сериала?', answers: ['Марк Черри', 'Райан Мёрфи', 'Шонда Раймс', 'Аарон Соркин'], correct: 0 },
         { show: 'housewives', difficulty: 'medium', question: 'На каком телеканале выходил сериал в США?', answers: ['ABC', 'NBC', 'CBS', 'FOX'], correct: 0 },
         { show: 'housewives', difficulty: 'medium', question: 'Как зовут мужа Бри в начале сериала?', answers: ['Рекс Ван де Камп', 'Карл Майер', 'Карлос Солис', 'Том Скаво'], correct: 0 },
-        { show: 'housewives', difficulty: 'medium', question: 'Как зовут мужа Сьюзан?', answers: ['Карл Майер', 'Рекс', 'Карлос', 'Том'], correct: 0 },
+        { show: 'housewives', difficulty: 'medium', question: 'Как зовут первого (бывшего) мужа Сьюзан и отца Джули?', answers: ['Карл Майер', 'Рекс', 'Карлос', 'Том'], correct: 0 },
         { show: 'housewives', difficulty: 'medium', question: 'Как зовут мужа Габриэль?', answers: ['Карлос Солис', 'Карл Майер', 'Рекс', 'Том'], correct: 0 },
         { show: 'housewives', difficulty: 'medium', question: 'Как зовут мужа Линетт?', answers: ['Том Скаво', 'Карлос', 'Рекс', 'Карл'], correct: 0 },
         { show: 'housewives', difficulty: 'medium', question: 'Как называется главный таймлайн сериала?', answers: ['Wisteria Lane', 'Fairview', 'Maple Town', 'Sunnydale'], correct: 0 },
@@ -228,7 +227,7 @@
         { show: 'housewives', difficulty: 'medium', question: 'Кто из героинь имеет модельное прошлое?', answers: ['Габриэль', 'Сьюзан', 'Бри', 'Линетт'], correct: 0 },
         { show: 'housewives', difficulty: 'medium', question: 'Кто из героинь постоянно сталкивается с финансовыми проблемами?', answers: ['Сьюзан', 'Бри', 'Габриэль', 'Эди'], correct: 0 },
         { show: 'housewives', difficulty: 'medium', question: 'Кто из героинь самая прагматичная в семье?', answers: ['Линетт', 'Сьюзан', 'Габриэль', 'Эди'], correct: 0 },
-
+        
         { show: 'housewives', difficulty: 'hard', question: 'Кто является создателем сериала?', answers: ['Марк Черри', 'Шонда Раймс', 'Райан Мёрфи', 'Аарон Соркин'], correct: 0 },
         { show: 'housewives', difficulty: 'hard', question: 'Как называется жанр сериала точнее всего?', answers: ['Драмеди / мыльная опера с мистикой', 'Ситком', 'Процедурал', 'Фантастика'], correct: 0 },
         { show: 'housewives', difficulty: 'hard', question: 'Как зовут актрису, играющую Сьюзан Майер?', answers: ['Тери Хэтчер', 'Ева Лонгория', 'Марсия Кросс', 'Фелисити Хаффман'], correct: 0 },
@@ -263,7 +262,7 @@
         { show: 'b99', difficulty: 'easy', question: 'Как зовут напарницу Джейка?', answers: ['Эми Сантьяго', 'Роза Диаз', 'Гина', 'Кейт Перкинс'], correct: 0 },
         { show: 'b99', difficulty: 'easy', question: 'Как зовут лучшего друга Джейка?', answers: ['Чарльз Бойл', 'Терри Джеффордс', 'Хичкок', 'Скалли'], correct: 0 },
         { show: 'b99', difficulty: 'easy', question: 'Как зовут сильного сержанта участка?', answers: ['Терри Джеффордс', 'Холт', 'Бойл', 'Джуди'], correct: 0 },
-        { show: 'b99', difficulty: 'easy', question: 'Как зовут саркастичную ассистентку капитана?', answers: ['Гина Линетти', 'Эми', 'Роза', 'Кейт'], correct: 0 },
+        { show: 'b99', difficulty: 'easy', question: 'Как зовут саркастичную ассистентку капитана?', answers: ['Джина Линетти', 'Эми', 'Роза', 'Кейт'], correct: 0 },
         { show: 'b99', difficulty: 'easy', question: 'Как зовут детектива с любовью к еде?', answers: ['Чарльз Бойл', 'Джейк', 'Терри', 'Холт'], correct: 0 },
         { show: 'b99', difficulty: 'easy', question: 'Кто из персонажей любит йогурт?', answers: ['Терри Джеффордс', 'Холт', 'Джейк', 'Бойл'], correct: 0 },
         { show: 'b99', difficulty: 'easy', question: 'Как зовут холодную и серьёзную детектива?', answers: ['Роза Диаз', 'Эми', 'Гина', 'Кейт'], correct: 0 },
@@ -335,7 +334,7 @@
         { show: 'b99', difficulty: 'hard', question: 'Как зовут актёра, играющего Эми Сантьяго?', answers: ['Мелисса Фумеро', 'Стэфани Беатрис', 'Энди Сэмберг', 'Терри Крюс'], correct: 0 },
         { show: 'b99', difficulty: 'hard', question: 'Как называется реальная полиция, на которой основан сериал?', answers: ['NYPD', 'LAPD', 'FBI', 'CIA'], correct: 0 },
         { show: 'b99', difficulty: 'hard', question: 'Как называется основной жанр сериала?', answers: ['Police procedural comedy', 'Drama', 'Thriller', 'Reality show'], correct: 0 }       
-                
+                 
     ];
 
     // Игровое состояние
@@ -407,7 +406,11 @@
                 }
             }
         });
-        Lampa.Controller.toggle('quiz_gate');
+
+        // ВАЖНО: Делаем тайм-аут, чтобы ядро Lampa не сбросило активный контроллер обратно на дефолтный ('main') при загрузке
+        setTimeout(function() {
+            Lampa.Controller.toggle('quiz_gate');
+        }, 300);
     }
 
     function updateFocusMap() {
@@ -490,25 +493,19 @@
     // Сборка пула вопросов с глубоким перемешиванием
     function startQuizLogic() {
         let pool = QUESTIONS_BASE.filter(q => q.show === gameState.selectedShow && q.difficulty === gameState.selectedDifficulty);
-        // Если по конкретной сложности вопросов нет или мало, берем все вопросы этого сериала
         if (pool.length === 0) {
             pool = QUESTIONS_BASE.filter(q => q.show === gameState.selectedShow);
         }
 
-        // Делаем глубокую копию пула, чтобы не испортить оригинальный массив QUESTIONS_BASE при перемешивании ответов
         let copiedPool = JSON.parse(JSON.stringify(pool));
-        
-        // Перемешиваем сам список вопросов
         copiedPool = shuffleArray(copiedPool);
 
-        // Перемешиваем варианты ответов КНУТРИ каждого выбранного вопроса
         copiedPool.forEach(q => {
-            let correctText = q.answers[q.correct]; // Запоминаем текст правильного ответа
-            q.answers = shuffleArray(q.answers);    // Перемешиваем кнопки
-            q.correct = q.answers.indexOf(correctText); // Находим новый индекс правильного ответа
+            let correctText = q.answers[q.correct];
+            q.answers = shuffleArray(q.answers);
+            q.correct = q.answers.indexOf(correctText);
         });
 
-        // Берем максимум 5 вопросов (или сколько есть всего, если база маленькая)
         gameState.quizQuestions = copiedPool.slice(0, Math.min(5, copiedPool.length));
         gameState.currentIndex = 0;
         gameState.correctCount = 0;
@@ -595,8 +592,6 @@
     function renderFinalResultScreen() {
         const content = $('#quiz-gate-content');
         const totalQuestions = gameState.quizQuestions.length;
-        
-        // Победа, если ответил правильно хотя бы на 60% вопросов
         const isWin = gameState.correctCount >= Math.ceil(totalQuestions * 0.6);
 
         if (isWin) {
