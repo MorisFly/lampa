@@ -50,7 +50,6 @@
                         btn.style.transform = 'scale(1)';
                     }
                 } else {
-                    // Если кнопка уже «зелёная», не перезаписываем её стили фокуса
                     if (btn.isCorrectHighlight) return;
 
                     if (isFocused) {
@@ -121,7 +120,7 @@
                 btnsContainer.appendChild(btnStart);
                 buttonElements.push(btnStart);
             }
-            // ШАГ 1: Проверка на гниду
+            // ШАГ 1: Проверка
             else if (step === 1) {
                 title.innerText = 'Итак, ты гей?';
                 var btnYes = createButton('ДА', function () {
@@ -134,7 +133,7 @@
                 btnsContainer.appendChild(btnNo);
                 buttonElements.push(btnYes, btnNo);
             }
-            // ШАГ 2: Экран изгнания (Тут же QR и ссылка)
+            // ШАГ 2: Экран изгнания
             else if (step === 2) {
                 title.innerText = 'Ну и проваливай нахуй отсюда!';
                 var btnExit = createButton('Выйти из Lampa', function () {
@@ -189,7 +188,7 @@
                 qrContainer.appendChild(qrImg);
                 btnsContainer.appendChild(qrContainer);
             }
-            // ШАГ 3: «Вход для натуралов» ведёт сюда
+            // ШАГ 3: Проверка на понт
             else if (step === 3) {
                 title.innerText = 'Думал, просто нажмёшь НЕТ и всё? Кого ты пытаешься наебать?! Сейчас мы тебя проверим.';
                 var btnBlyaa = createButton('Бляяя…', function () {
@@ -198,20 +197,18 @@
                 btnsContainer.appendChild(btnBlyaa);
                 buttonElements.push(btnBlyaa);
             }
-            // ШАГ 4: Прорыв Сперанского (Оба верные, красятся в зелёный)
+            // ШАГ 4: Прорыв Сперанского
             else if (step === 4) {
                 title.innerText = 'Что такое Прорыв Сперанского?';
                 
                 var handleSperanskyClick = function (clickedBtn) {
                     isTransitioning = true;
-                    // Подсвечиваем нажатую кнопку зелёным
                     clickedBtn.isCorrectHighlight = true;
                     clickedBtn.style.backgroundColor = '#2ecc71';
                     clickedBtn.style.borderColor = '#2ecc71';
                     clickedBtn.style.color = '#ffffff';
                     clickedBtn.style.transform = 'scale(1.05)';
                     
-                    // Небольшой таймаут для визуального кайфа
                     setTimeout(function () {
                         renderStep(5);
                     }, 800);
@@ -224,20 +221,22 @@
                 btnsContainer.appendChild(btnEggs);
                 buttonElements.push(btnRef, btnEggs);
             }
-            // ШАГ 5: Разминка окончена
+            // ШАГ 5: Перетасован для правильного фокуса пульта
             else if (step === 5) {
                 title.innerText = 'Это была разминка. А теперь перейдём к делу, капишь?';
-                var btnImGay = createButton('Нахуй это всё, я гей!', function () {
-                    renderStep(2);
-                });
                 var btnLetsGo = createButton('Погнали!', function () {
                     renderStep(6);
                 });
-                btnsContainer.appendChild(btnImGay);
+                var btnImGay = createButton('Нахуй это всё, я гей!', function () {
+                    renderStep(2);
+                });
+                
+                // Теперь "Погнали" первая и в DOM, и в массиве фокуса
                 btnsContainer.appendChild(btnLetsGo);
-                buttonElements.push(btnLetsGo, btnImGay); // "Погнали!" первой в массив, чтобы фокус сразу стоял на ней
+                btnsContainer.appendChild(btnImGay);
+                buttonElements.push(btnLetsGo, btnImGay); 
             }
-            // ШАГ 6: Главный вопрос про Клан Сопрано
+            // ШАГ 6: Сопрано
             else if (step === 6) {
                 title.innerText = 'Commendatore, моё почтение! Я же знаю, что ты зашёл сюда, чтобы посмотреть Клан Сопрано. Ответь тогда на такой вопрос: Какой автомобиль был у Тони в первом сезоне сериала?';
                 
@@ -262,7 +261,7 @@
                 
                 buttonElements.push(btnTahoe, btnSuburban, btnEscalade, btnYukon);
             }
-            // ШАГ 7: Финал, пускаем в Bada Bing!
+            // ШАГ 7: Финал
             else if (step === 7) {
                 title.innerText = 'Поздравляю! Ты достоин! Добро пожаловать! 🎉';
                 var btnBadaBing = createButton('Вход в Bada Bing!', function () {
@@ -284,13 +283,17 @@
 
         // Обработка пульта / клавиатуры
         function handleKeyDown(e) {
-            if (isTransitioning) return; // Игнорируем клики во время анимации перехода
-
             var keys = [38, 40, 13];
-            if (keys.indexOf(e.keyCode) > -1 || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter') {
+            var isNavKey = keys.indexOf(e.keyCode) > -1 || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter';
+
+            // Блокируем стандартное поведение Лампы СРАЗУ, если нажата кнопка навигации
+            if (isNavKey) {
                 e.preventDefault();
                 e.stopPropagation();
             }
+
+            // Если идет анимация перехода — просто глушим нажатие, не давая ему уйти в Лампу
+            if (isTransitioning || !isNavKey) return; 
 
             if (e.keyCode === 38 || e.key === 'ArrowUp') { 
                 currentFocusIndex = (currentFocusIndex - 1 + buttonElements.length) % buttonElements.length;
