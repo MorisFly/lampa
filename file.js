@@ -427,7 +427,6 @@
         // Синхронизация мыши: при наведении обновляем индекс фокуса
         elements.off('mouseenter').on('mouseenter', function () {
             focusIndex = focusableElements.indexOf(this);
-            Lampa.Controller.collectionIndex(focusIndex);
             applyTvFocus();
         });
 
@@ -439,7 +438,6 @@
         if (focusableElements[focusIndex]) {
             const currentEl = $(focusableElements[focusIndex]);
             currentEl.addClass('focus');
-            Lampa.Controller.collectionIndex(focusIndex); // Синхронизируем внутренний индекс фокуса Лампы
             if (currentEl.length) {
                 currentEl[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             }
