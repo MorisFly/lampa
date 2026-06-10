@@ -113,7 +113,7 @@
 
             // ШАГ 0: Старт
             if (step === 0) {
-                title.innerText = 'Докажи ка, что ты не гей! Осилишь?! 😁';
+                title.innerHTML = 'Докажи ка, что ты не гей!<br>Осилишь?! 😁';
                 var btnStart = createButton('Попробую', function () {
                     renderStep(1);
                 });
@@ -137,35 +137,36 @@
             else if (step === 2) {
                 title.innerText = 'Ну и проваливай нахуй отсюда!';
                 var btnExit = createButton('Выйти из Lampa', function () {
-                    // 1. Родной метод Lampa (если прописан в платформе)
-                    if (typeof Lampa !== 'undefined' && Lampa.Platform && typeof Lampa.Platform.exit === 'function') {
-                        try { Lampa.Platform.exit(); } catch(e) {}
+                    // 1. Сигнализируем Лампе о выходе из активностей (закрываем оверлеи)
+                    if (typeof Lampa !== 'undefined' && Lampa.Activity && typeof Lampa.Activity.out === 'function') {
+                        try { Lampa.Activity.out(); } catch(e) {}
                     }
-                    // 2. Для различных Android APK оберток (официальных и кастомных)
-                    if (window.Android && typeof window.Android.exit === 'function') {
-                        try { window.Android.exit(); } catch(e) {}
+
+                    // 2. Закрываем приложение методами из стандартного плагина выхода Lampa
+                    if (typeof Lampa !== 'undefined' && Lampa.Platform && typeof Lampa.Platform.is === 'function') {
+                        try {
+                            if (Lampa.Platform.is('apple_tv')) window.location.assign('exit://exit');
+                            if (Lampa.Platform.is("tizen") && typeof tizen !== 'undefined') tizen.application.getCurrentApplication().exit();
+                            if (Lampa.Platform.is("webos")) window.close();
+                            if (Lampa.Platform.is("android") && Lampa.Android && typeof Lampa.Android.exit === 'function') Lampa.Android.exit();
+                            if (Lampa.Platform.is("orsay") && Lampa.Orsay && typeof Lampa.Orsay.exit === 'function') Lampa.Orsay.exit();
+                            if (Lampa.Platform.is("nw") && typeof nw !== 'undefined') nw.Window.get().close();
+                        } catch(e) {}
                     }
-                    if (window.LampaApp && typeof window.LampaApp.exit === 'function') {
-                        try { window.LampaApp.exit(); } catch(e) {}
-                    }
-                    // 3. Для Cordova/PhoneGap сред (частые обертки под ТВ)
-                    if (navigator.app && typeof navigator.app.exitApp === 'function') {
-                        try { navigator.app.exitApp(); } catch(e) {}
-                    }
-                    // 4. Для Samsung Tizen Smart TV
-                    if (window.tizen && window.tizen.application) {
-                        try { window.tizen.application.getCurrentApplication().exit(); } catch(e) {}
-                    }
-                    // 5. Для LG webOS Smart TV
-                    if (window.webOS && window.webOS.platformBack) {
-                        try { window.webOS.platformBack(); } catch(e) {}
-                    }
-                    // 6. Универсальный фоллбек для браузеров / MSX
+
+                    // 3. Универсальные фоллбеки на случай, если платформа определилась неверно
+                    try {
+                        if (window.tizen && window.tizen.application) window.tizen.application.getCurrentApplication().exit();
+                        if (window.webOS && window.webOS.platformBack) window.webOS.platformBack();
+                    } catch(e) {}
+
+                    // 4. Обычный браузерный фоллбек
                     try {
                         window.location.href = 'about:blank';
                         window.close();
                     } catch(e) {}
                 });
+
                 btnsContainer.appendChild(btnExit);
                 buttonElements.push(btnExit);
 
