@@ -34,19 +34,34 @@
         var buttonElements = [];
         var currentFocusIndex = 0;
 
-        // Функция обновления фокуса (подсветка кнопок для ТВ)
+        // Функция обновления фокуса (подсветка кнопок и ссылок для ТВ)
         function updateFocus() {
             buttonElements.forEach(function (btn, idx) {
-                if (idx === currentFocusIndex) {
-                    btn.style.backgroundColor = '#ffffff';
-                    btn.style.color = '#141414';
-                    btn.style.borderColor = '#ffffff';
-                    btn.style.transform = 'scale(1.03)';
+                var isFocused = (idx === currentFocusIndex);
+                if (btn.isLink) {
+                    // Специальный стиль фокуса для текстовой ссылки «сюда»
+                    if (isFocused) {
+                        btn.style.color = '#ffffff';
+                        btn.style.fontWeight = '700';
+                        btn.style.transform = 'scale(1.1)';
+                    } else {
+                        btn.style.color = '#3498db';
+                        btn.style.fontWeight = '500';
+                        btn.style.transform = 'scale(1)';
+                    }
                 } else {
-                    btn.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                    btn.style.color = '#ffffff';
-                    btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                    btn.style.transform = 'scale(1)';
+                    // Стандартный стиль фокуса для блочных кнопок
+                    if (isFocused) {
+                        btn.style.backgroundColor = '#ffffff';
+                        btn.style.color = '#141414';
+                        btn.style.borderColor = '#ffffff';
+                        btn.style.transform = 'scale(1.03)';
+                    } else {
+                        btn.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                        btn.style.color = '#ffffff';
+                        btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        btn.style.transform = 'scale(1)';
+                    }
                 }
             });
         }
@@ -138,6 +153,53 @@
                 });
                 btnsContainer.appendChild(btnExit);
                 buttonElements.push(btnExit);
+
+                // Добавляем блок текста: «Или тебе сюда.»
+                var textBlock = document.createElement('div');
+                textBlock.style.color = '#a0a0a0';
+                textBlock.style.fontSize = '16px';
+                textBlock.style.marginTop = '25px';
+                textBlock.style.display = 'block';
+                textBlock.appendChild(document.createTextNode('Или тебе '));
+
+                var link = document.createElement('a');
+                link.href = 'https://www.ivi.ru';
+                link.target = '_blank';
+                link.innerText = 'сюда';
+                link.style.color = '#3498db';
+                link.style.textDecoration = 'underline';
+                link.style.cursor = 'pointer';
+                link.style.display = 'inline-block';
+                link.style.transition = 'all 0.2s ease';
+                link.isLink = true; // Маркер для функции подсветки updateFocus
+
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.open('https://www.ivi.ru', '_blank');
+                });
+
+                textBlock.appendChild(link);
+                textBlock.appendChild(document.createTextNode('.'));
+                btnsContainer.appendChild(textBlock);
+                buttonElements.push(link); // Добавляем ссылку в пульт управления
+
+                // Добавляем QR-код ниже
+                var qrContainer = document.createElement('div');
+                qrContainer.style.marginTop = '20px';
+                qrContainer.style.display = 'block';
+
+                var qrImg = document.createElement('img');
+                // Генерируем контрастный QR-код (220х220) со ссылкой на ivi.ru
+                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fwww.ivi.ru';
+                qrImg.style.width = '220px';
+                qrImg.style.height = '220px';
+                qrImg.style.borderRadius = '12px';
+                qrImg.style.border = '6px solid #ffffff'; // Белая рамка для беспроблемного сканирования камерой с ТВ
+                qrImg.style.boxShadow = '0 6px 25px rgba(0,0,0,0.6)';
+                qrImg.style.display = 'inline-block';
+
+                qrContainer.appendChild(qrImg);
+                btnsContainer.appendChild(qrContainer);
             }
             // ШАГ 3: Успешный вход (выбран НЕТ)
             else if (step === 3) {
