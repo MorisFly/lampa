@@ -362,6 +362,13 @@
         return array;
     }
 
+    // Универсальная функция смещения фокуса
+    function moveFocus(direction) {
+        if (focusableElements.length === 0) return;
+        focusIndex = (focusIndex + direction + focusableElements.length) % focusableElements.length;
+        applyTvFocus();
+    }
+
     function init() {
         const overlayHtml = `
             <div id="lampa-quiz-gate-overlay">
@@ -375,22 +382,18 @@
     }
 
     // ==========================================
-    // ТЕЛЕВИЗИОННОЕ УПРАВЛЕНИЕ
+    // ТЕЛЕВИЗИОННОЕ И КЛАВИАТУРНОЕ УПРАВЛЕНИЕ
     // ==========================================
     function registerTvController() {
         Lampa.Controller.add('quiz_gate', {
-            toggle: function () {},
+            toggle: function () {
+                updateFocusMap();
+            },
             up: function () {
-                if (focusableElements.length > 0) {
-                    focusIndex = (focusIndex - 1 + focusableElements.length) % focusableElements.length;
-                    applyTvFocus();
-                }
+                moveFocus(-1);
             },
             down: function () {
-                if (focusableElements.length > 0) {
-                    focusIndex = (focusIndex + 1) % focusableElements.length;
-                    applyTvFocus();
-                }
+                moveFocus(1);
             },
             left: function () {},
             right: function () {},
@@ -407,15 +410,27 @@
             }
         });
 
-        // ВАЖНО: Делаем тайм-аут, чтобы ядро Lampa не сбросило активный контроллер обратно на дефолтный ('main') при загрузке
+        // Делаем тайм-аут, чтобы ядро Lampa не сбросило активный контроллер обратно на дефолтный ('main') при загрузке
         setTimeout(function() {
             Lampa.Controller.toggle('quiz_gate');
         }, 300);
     }
 
     function updateFocusMap() {
-        focusableElements = $('#quiz-gate-content').find('.quiz-focusable').toArray();
+        const elements = $('#quiz-gate-content').find('.quiz-focusable');
+        focusableElements = elements.toArray();
         focusIndex = 0;
+
+        // Передаем элементы в коллекцию Лампы, чтобы ядро знало об их наличии
+        Lampa.Controller.collectionSet(elements);
+
+        // Синхронизация мыши: при наведении обновляем индекс фокуса
+        elements.off('mouseenter').on('mouseenter', function () {
+            focusIndex = focusableElements.indexOf(this);
+            Lampa.Controller.collectionIndex(focusIndex);
+            applyTvFocus();
+        });
+
         applyTvFocus();
     }
 
@@ -424,6 +439,7 @@
         if (focusableElements[focusIndex]) {
             const currentEl = $(focusableElements[focusIndex]);
             currentEl.addClass('focus');
+            Lampa.Controller.collectionIndex(focusIndex); // Синхронизируем внутренний индекс фокуса Лампы
             if (currentEl.length) {
                 currentEl[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             }
@@ -584,7 +600,7 @@
         });
 
         updateFocusMap();
-        focusIndex = 1; // Фокус на первый вариант ответа
+        focusIndex = 1; // Фокус по умолчанию переводим на первый вариант ответа
         applyTvFocus();
     }
 
