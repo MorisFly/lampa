@@ -209,7 +209,7 @@
             }
             // ШАГ 3: Проверка на понт
             else if (step === 3) {
-                title.innerText = 'Думал, просто нажмёшь НЕТ и всё? Кого ты пытаешься наебать?! Сейчас мы тебя проверим.';
+                title.innerHTML = 'Думал, просто нажмёшь НЕТ и всё?<br>Кого ты пытаешься наебать?!<br><br>Сейчас мы тебя проверим.';
                 var btnBlyaa = createButton('Бляяя…', function () {
                     renderStep(4);
                 });
@@ -242,7 +242,7 @@
             }
             // ШАГ 5: Переход дальше
             else if (step === 5) {
-                title.innerText = 'Это была разминка. А теперь перейдём к делу, капишь?';
+                title.innerHTML = 'Это была разминка.<br>А теперь перейдём к делу, капишь?';
                 var btnLetsGo = createButton('Погнали!', function () {
                     renderStep(6);
                 });
@@ -256,7 +256,7 @@
             }
             // ШАГ 6: Сабёрбан
             else if (step === 6) {
-                title.innerText = 'Commendatore, моё почтение! Я же знаю, что ты зашёл сюда, чтобы посмотреть Клан Сопрано. Ответь тогда на такой вопрос: Какой автомобиль был у Тони в первом сезоне сериала?';
+                title.innerHTML = 'Commendatore, моё почтение!<br><br>Я же знаю, что ты зашёл сюда, чтобы посмотреть Клан Сопрано.<br><br>Ответь тогда на такой вопрос:<br>Какой автомобиль был у Тони в первом сезоне сериала?';
                 
                 var btnTahoe = createButton('Chevrolet Tahoe', function () { renderStep(2); });
                 var btnSuburban = createButton('Chevrolet Suburban', function (clickedBtn) {
@@ -281,7 +281,7 @@
             }
             // ШАГ 7: Финал
             else if (step === 7) {
-                title.innerText = 'Поздравляю! Ты достоин! Добро пожаловать! 🎉';
+                title.innerHTML = 'Поздравляю! Ты достоин!<br><br>Добро пожаловать! 🎉';
                 var btnBadaBing = createButton('Вход в Bada Bing!', function () {
                     window.removeEventListener('keydown', handleKeyDown, true);
                     overlay.style.opacity = '0';
