@@ -133,20 +133,38 @@
                 btnsContainer.appendChild(btnNo);
                 buttonElements.push(btnYes, btnNo);
             }
-            // ШАГ 2: Экран изгнания
+            // ШАГ 2: Экран изгнания (Исправлен QR и Выход)
             else if (step === 2) {
                 title.innerText = 'Ну и проваливай нахуй отсюда!';
                 var btnExit = createButton('Выйти из Lampa', function () {
+                    // 1. Родной метод Lampa (если прописан в платформе)
                     if (typeof Lampa !== 'undefined' && Lampa.Platform && typeof Lampa.Platform.exit === 'function') {
-                        Lampa.Platform.exit();
-                    } else if (window.tizen) {
-                        window.tizen.application.getCurrentApplication().exit();
-                    } else if (window.webOS && window.webOS.platformBack) {
-                        window.webOS.platformBack();
-                    } else {
+                        try { Lampa.Platform.exit(); } catch(e) {}
+                    }
+                    // 2. Для различных Android APK оберток (официальных и кастомных)
+                    if (window.Android && typeof window.Android.exit === 'function') {
+                        try { window.Android.exit(); } catch(e) {}
+                    }
+                    if (window.LampaApp && typeof window.LampaApp.exit === 'function') {
+                        try { window.LampaApp.exit(); } catch(e) {}
+                    }
+                    // 3. Для Cordova/PhoneGap сред (частые обертки под ТВ)
+                    if (navigator.app && typeof navigator.app.exitApp === 'function') {
+                        try { navigator.app.exitApp(); } catch(e) {}
+                    }
+                    // 4. Для Samsung Tizen Smart TV
+                    if (window.tizen && window.tizen.application) {
+                        try { window.tizen.application.getCurrentApplication().exit(); } catch(e) {}
+                    }
+                    // 5. Для LG webOS Smart TV
+                    if (window.webOS && window.webOS.platformBack) {
+                        try { window.webOS.platformBack(); } catch(e) {}
+                    }
+                    // 6. Универсальный фоллбек для браузеров / MSX
+                    try {
                         window.location.href = 'about:blank';
                         window.close();
-                    }
+                    } catch(e) {}
                 });
                 btnsContainer.appendChild(btnExit);
                 buttonElements.push(btnExit);
@@ -176,10 +194,11 @@
                 btnsContainer.appendChild(textBlock);
                 buttonElements.push(link);
 
+                // Динамическая генерация QR-кода без зависимостей от GitHub
                 var qrContainer = document.createElement('div');
                 qrContainer.style.marginTop = '20px';
                 var qrImg = document.createElement('img');
-                qrImg.src = 'https://raw.githubusercontent.com/MorisFly/lampa/main/qr_ivi.png';
+                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent('https://www.ivi.ru');
                 qrImg.style.width = '200px';
                 qrImg.style.height = '200px';
                 qrImg.style.borderRadius = '12px';
@@ -221,7 +240,7 @@
                 btnsContainer.appendChild(btnEggs);
                 buttonElements.push(btnRef, btnEggs);
             }
-            // ШАГ 5: Перетасован для правильного фокуса пульта
+            // ШАГ 5: Переход дальше
             else if (step === 5) {
                 title.innerText = 'Это была разминка. А теперь перейдём к делу, капишь?';
                 var btnLetsGo = createButton('Погнали!', function () {
@@ -231,12 +250,11 @@
                     renderStep(2);
                 });
                 
-                // Теперь "Погнали" первая и в DOM, и в массиве фокуса
                 btnsContainer.appendChild(btnLetsGo);
                 btnsContainer.appendChild(btnImGay);
                 buttonElements.push(btnLetsGo, btnImGay); 
             }
-            // ШАГ 6: Сопрано
+            // ШАГ 6: Сабёрбан
             else if (step === 6) {
                 title.innerText = 'Commendatore, моё почтение! Я же знаю, что ты зашёл сюда, чтобы посмотреть Клан Сопрано. Ответь тогда на такой вопрос: Какой автомобиль был у Тони в первом сезоне сериала?';
                 
@@ -286,13 +304,11 @@
             var keys = [38, 40, 13];
             var isNavKey = keys.indexOf(e.keyCode) > -1 || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter';
 
-            // Блокируем стандартное поведение Лампы СРАЗУ, если нажата кнопка навигации
             if (isNavKey) {
                 e.preventDefault();
                 e.stopPropagation();
             }
 
-            // Если идет анимация перехода — просто глушим нажатие, не давая ему уйти в Лампу
             if (isTransitioning || !isNavKey) return; 
 
             if (e.keyCode === 38 || e.key === 'ArrowUp') { 
