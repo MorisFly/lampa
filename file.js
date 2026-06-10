@@ -167,7 +167,6 @@
                 <button class="quiz-btn option-btn quiz-focusable select-diff" data-diff="easy">Легко</button>
                 <button class="quiz-btn option-btn quiz-focusable select-diff" data-diff="medium">Средне</button>
                 <button class="quiz-btn option-btn quiz-focusable select-diff" data-diff="hard">Сложно</button>
-                <button class="quiz-btn option-btn quiz-focusable select-diff" data-diff="nerd">Задрот</button>
                 <button class="quiz-btn link-btn quiz-focusable back-to-start" style="margin-top:10px;">↩ К выбору темы</button>
             </div>
         `);
