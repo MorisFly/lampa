@@ -1,10 +1,8 @@
 (function () {
     'use strict';
-
     function startPlugin() {
         if (typeof Lampa !== 'undefined') {
             Lampa.Noty.show('Добро пожаловать! Плагин на iPhone работает идеально. 🎉');
-            
             Lampa.Menu.add({
                 id: 'welcome_plugin_button',
                 title: 'Приветствие 👋',
@@ -15,7 +13,6 @@
             });
         }
     }
-
     var checkLampa = setInterval(function() {
         if (typeof Lampa !== 'undefined' && window.appready) {
             clearInterval(checkLampa);
