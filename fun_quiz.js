@@ -23,23 +23,23 @@
         overlay.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 
         var card = document.createElement('div');
-        card.style.maxWidth = '450px';
+        card.style.maxWidth = '480px';
         card.style.width = '100%';
         card.style.textAlign = 'center';
         overlay.appendChild(card);
         document.body.appendChild(overlay);
 
-        // Переменные для контроля шагов и ТВ-пульта
+        // Состояния квиза
         var currentStep = 0;
         var buttonElements = [];
         var currentFocusIndex = 0;
+        var isTransitioning = false; // Блокировка спам-кликов во время анимаций
 
-        // Функция обновления фокуса (подсветка кнопок и ссылок для ТВ)
+        // Функция обновления фокуса пульта/клавиатуры
         function updateFocus() {
             buttonElements.forEach(function (btn, idx) {
                 var isFocused = (idx === currentFocusIndex);
                 if (btn.isLink) {
-                    // Специальный стиль фокуса для текстовой ссылки «сюда»
                     if (isFocused) {
                         btn.style.color = '#ffffff';
                         btn.style.fontWeight = '700';
@@ -50,7 +50,9 @@
                         btn.style.transform = 'scale(1)';
                     }
                 } else {
-                    // Стандартный стиль фокуса для блочных кнопок
+                    // Если кнопка уже «зелёная», не перезаписываем её стили фокуса
+                    if (btn.isCorrectHighlight) return;
+
                     if (isFocused) {
                         btn.style.backgroundColor = '#ffffff';
                         btn.style.color = '#141414';
@@ -78,23 +80,26 @@
             btn.style.cursor = 'pointer';
             btn.style.transition = 'all 0.2s ease';
             btn.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+            btn.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+            btn.style.color = '#ffffff';
             btn.style.webkitTapHighlightColor = 'transparent';
 
             btn.addEventListener('click', function (e) {
                 e.preventDefault();
-                onClick();
+                if (isTransitioning) return;
+                onClick(btn);
             });
             return btn;
         }
 
-        // Главный движок шагов квиза
+        // Движок шагов
         function renderStep(step) {
             currentStep = step;
-            card.innerHTML = ''; // Очищаем предыдущий шаг
+            card.innerHTML = ''; 
             buttonElements = [];
-            currentFocusIndex = 0; // Сбрасываем фокус на первую кнопку нового шага
+            currentFocusIndex = 0; 
+            isTransitioning = false;
 
-            // Заголовок шага
             var title = document.createElement('h2');
             title.style.color = '#ffffff';
             title.style.fontSize = '22px';
@@ -102,43 +107,37 @@
             title.style.marginBottom = '30px';
             title.style.lineHeight = '1.4';
 
-            // Контейнер для кнопок
             var btnsContainer = document.createElement('div');
             btnsContainer.style.display = 'flex';
             btnsContainer.style.flexDirection = 'column';
             btnsContainer.style.gap = '12px';
 
-            // ШАГ 0: Приветствие
+            // ШАГ 0: Старт
             if (step === 0) {
                 title.innerText = 'Докажи ка, что ты не гей! Осилишь?! 😁';
-                
                 var btnStart = createButton('Попробую', function () {
                     renderStep(1);
                 });
                 btnsContainer.appendChild(btnStart);
                 buttonElements.push(btnStart);
             }
-            // ШАГ 1: Главный вопрос
+            // ШАГ 1: Проверка на гниду
             else if (step === 1) {
                 title.innerText = 'Итак, ты гей?';
-                
                 var btnYes = createButton('ДА', function () {
                     renderStep(2);
                 });
                 var btnNo = createButton('НЕТ', function () {
                     renderStep(3);
                 });
-                
                 btnsContainer.appendChild(btnYes);
                 btnsContainer.appendChild(btnNo);
                 buttonElements.push(btnYes, btnNo);
             }
-            // ШАГ 2: Выход (выбран ДА)
+            // ШАГ 2: Экран изгнания (Тут же QR и ссылка)
             else if (step === 2) {
                 title.innerText = 'Ну и проваливай нахуй отсюда!';
-                
                 var btnExit = createButton('Выйти из Lampa', function () {
-                    // Пытаемся закрыть приложение всеми доступными способами платформ
                     if (typeof Lampa !== 'undefined' && Lampa.Platform && typeof Lampa.Platform.exit === 'function') {
                         Lampa.Platform.exit();
                     } else if (window.tizen) {
@@ -146,7 +145,6 @@
                     } else if (window.webOS && window.webOS.platformBack) {
                         window.webOS.platformBack();
                     } else {
-                        // Для ПК/смартфонов перенаправляем на пустую страницу и закрываем вкладку
                         window.location.href = 'about:blank';
                         window.close();
                     }
@@ -154,12 +152,10 @@
                 btnsContainer.appendChild(btnExit);
                 buttonElements.push(btnExit);
 
-                // Добавляем блок текста: «Или тебе сюда.»
                 var textBlock = document.createElement('div');
                 textBlock.style.color = '#a0a0a0';
                 textBlock.style.fontSize = '16px';
                 textBlock.style.marginTop = '25px';
-                textBlock.style.display = 'block';
                 textBlock.appendChild(document.createTextNode('Или тебе '));
 
                 var link = document.createElement('a');
@@ -171,82 +167,145 @@
                 link.style.cursor = 'pointer';
                 link.style.display = 'inline-block';
                 link.style.transition = 'all 0.2s ease';
-                link.isLink = true; // Маркер для функции подсветки updateFocus
-
+                link.isLink = true;
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
                     window.open('https://www.ivi.ru', '_blank');
                 });
-
                 textBlock.appendChild(link);
                 textBlock.appendChild(document.createTextNode('.'));
                 btnsContainer.appendChild(textBlock);
-                buttonElements.push(link); // Добавляем ссылку в пульт управления
+                buttonElements.push(link);
 
-                // Добавляем QR-код ниже
                 var qrContainer = document.createElement('div');
                 qrContainer.style.marginTop = '20px';
-                qrContainer.style.display = 'block';
-
                 var qrImg = document.createElement('img');
-                // Генерируем контрастный QR-код (220х220) со ссылкой на ivi.ru
-                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fwww.ivi.ru';
-                qrImg.style.width = '220px';
-                qrImg.style.height = '220px';
+                qrImg.src = 'https://raw.githubusercontent.com/MorisFly/lampa/main/qr_ivi.png';
+                qrImg.style.width = '200px';
+                qrImg.style.height = '200px';
                 qrImg.style.borderRadius = '12px';
-                qrImg.style.border = '6px solid #ffffff'; // Белая рамка для беспроблемного сканирования камерой с ТВ
-                qrImg.style.boxShadow = '0 6px 25px rgba(0,0,0,0.6)';
-                qrImg.style.display = 'inline-block';
-
+                qrImg.style.border = '6px solid #ffffff';
+                qrImg.style.boxShadow = '0 6px 25px rgba(0,0,0,0.5)';
                 qrContainer.appendChild(qrImg);
                 btnsContainer.appendChild(qrContainer);
             }
-            // ШАГ 3: Успешный вход (выбран НЕТ)
+            // ШАГ 3: «Вход для натуралов» ведёт сюда
             else if (step === 3) {
-                title.innerText = 'Да? В Пентагоне считают иначе. Ладно, заходи. Но я слежу за тобой!';
+                title.innerText = 'Думал, просто нажмёшь ДА и всё? Кого ты пытаешься наебать?! Сейчас мы тебя проверим.';
+                var btnBlyaa = createButton('Бляяя…', function () {
+                    renderStep(4);
+                });
+                btnsContainer.appendChild(btnBlyaa);
+                buttonElements.push(btnBlyaa);
+            }
+            // ШАГ 4: Прорыв Сперанского (Оба верные, красятся в зелёный)
+            else if (step === 4) {
+                title.innerText = 'Что такое Прорыв Сперанского?';
                 
-                var btnEnter = createButton('Вход для натуралов', function () {
-                    // Отключаем перехват кнопок пульта
-                    window.removeEventListener('keydown', handleKeyDown, true);
+                var handleSperanskyClick = function (clickedBtn) {
+                    isTransitioning = true;
+                    // Подсвечиваем нажатую кнопку зелёным
+                    clickedBtn.isCorrectHighlight = true;
+                    clickedBtn.style.backgroundColor = '#2ecc71';
+                    clickedBtn.style.borderColor = '#2ecc71';
+                    clickedBtn.style.color = '#ffffff';
+                    clickedBtn.style.transform = 'scale(1.05)';
                     
-                    // Эффект красивого исчезновения
+                    // Небольшой таймаут для визуального кайфа
+                    setTimeout(function () {
+                        renderStep(5);
+                    }, 800);
+                };
+
+                var btnRef = createButton('Реформы XIX века', handleSperanskyClick);
+                var btnEggs = createButton('Удар по яйцам', handleSperanskyClick);
+                
+                btnsContainer.appendChild(btnRef);
+                btnsContainer.appendChild(btnEggs);
+                buttonElements.push(btnRef, btnEggs);
+            }
+            // ШАГ 5: Разминка окончена
+            else if (step === 5) {
+                title.innerText = 'Это была разминка. А теперь перейдём к делу, капишь?';
+                var btnImGay = createButton('Нахуй это всё, я гей!', function () {
+                    renderStep(2);
+                });
+                var btnLetsGo = createButton('Погнали!', function () {
+                    renderStep(6);
+                });
+                btnsContainer.appendChild(btnImGay);
+                btnsContainer.appendChild(btnLetsGo);
+                buttonElements.push(btnLetsGo, btnImGay); // "Погнали!" первой в массив, чтобы фокус сразу стоял на ней
+            }
+            // ШАГ 6: Главный вопрос про Клан Сопрано
+            else if (step === 6) {
+                title.innerText = 'Commendatore, моё почтение! Я же знаю, что ты зашёл сюда, чтобы посмотреть Клан Сопрано. Ответь тогда на такой вопрос: Какой автомобиль был у Тони в первом сезоне сериала?';
+                
+                var btnTahoe = createButton('Chevrolet Tahoe', function () { renderStep(2); });
+                var btnSuburban = createButton('Chevrolet Suburban', function (clickedBtn) {
+                    isTransitioning = true;
+                    clickedBtn.isCorrectHighlight = true;
+                    clickedBtn.style.backgroundColor = '#2ecc71';
+                    clickedBtn.style.borderColor = '#2ecc71';
+                    clickedBtn.style.color = '#ffffff';
+                    setTimeout(function () {
+                        renderStep(7);
+                    }, 800);
+                });
+                var btnEscalade = createButton('Cadillac Escalade', function () { renderStep(2); });
+                var btnYukon = createButton('GMC Yukon', function () { renderStep(2); });
+
+                btnsContainer.appendChild(btnTahoe);
+                btnsContainer.appendChild(btnSuburban);
+                btnsContainer.appendChild(btnEscalade);
+                btnsContainer.appendChild(btnYukon);
+                
+                buttonElements.push(btnTahoe, btnSuburban, btnEscalade, btnYukon);
+            }
+            // ШАГ 7: Финал, пускаем в Bada Bing!
+            else if (step === 7) {
+                title.innerText = 'Поздравляю! Ты достоин! Добро пожаловать! 🎉';
+                var btnBadaBing = createButton('Вход в Bada Bing!', function () {
+                    window.removeEventListener('keydown', handleKeyDown, true);
                     overlay.style.opacity = '0';
                     overlay.style.transition = 'opacity 0.4s ease';
                     setTimeout(function () {
                         overlay.remove();
                     }, 400);
                 });
-                btnsContainer.appendChild(btnEnter);
-                buttonElements.push(btnEnter);
+                btnsContainer.appendChild(btnBadaBing);
+                buttonElements.push(btnBadaBing);
             }
 
             card.appendChild(title);
             card.appendChild(btnsContainer);
-            updateFocus(); // Принудительно подсвечиваем активный элемент
+            updateFocus();
         }
 
-        // Обработчик нажатий пульта (ТВ)
+        // Обработка пульта / клавиатуры
         function handleKeyDown(e) {
-            e.preventDefault();
-            e.stopPropagation();
+            if (isTransitioning) return; // Игнорируем клики во время анимации перехода
 
-            if (e.keyCode === 38 || e.key === 'ArrowUp') { // Нажатие ВВЕРХ
+            var keys = [38, 40, 13];
+            if (keys.indexOf(e.keyCode) > -1 || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            if (e.keyCode === 38 || e.key === 'ArrowUp') { 
                 currentFocusIndex = (currentFocusIndex - 1 + buttonElements.length) % buttonElements.length;
                 updateFocus();
-            } else if (e.keyCode === 40 || e.key === 'ArrowDown') { // Нажатие ВНИЗ
+            } else if (e.keyCode === 40 || e.key === 'ArrowDown') { 
                 currentFocusIndex = (currentFocusIndex + 1) % buttonElements.length;
                 updateFocus();
-            } else if (e.keyCode === 13 || e.key === 'Enter') { // Нажатие ОК
+            } else if (e.keyCode === 13 || e.key === 'Enter') { 
                 if (buttonElements[currentFocusIndex]) {
                     buttonElements[currentFocusIndex].click();
                 }
             }
         }
 
-        // Перехватываем управление пультом на самом верхнем уровне
         window.addEventListener('keydown', handleKeyDown, true);
-
-        // Инициализируем стартовый шаг
         renderStep(0);
     }
 
